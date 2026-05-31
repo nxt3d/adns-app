@@ -1,0 +1,129 @@
+---
+title: Integration guide
+description: Read name availability, check NFT control, and register a name against the aDNS registrar.
+---
+
+This guide covers the calls the aDNS dapp makes. The signatures below match
+`ADNSRegistrar.sol` in the contracts repository. The registrar address lands with the
+Sepolia deployment; until then the widget runs against a mock with these exact shapes.
+
+<Callout type="warning">
+  v1 registrar constraints: control is proven for **ERC-721 same-chain** NFTs only (via
+  `ownerOf`/approval). ERC-1155 and ERC-6909 control proofs, and cross-chain bindings, are
+  on the roadmap (see [ADNSIP-25](/docs/adnsip-25) security considerations).
+</Callout>
+
+## 1. Check that the wallet controls the NFT
+
+The connected wallet must control the NFT it binds. v1 proves this for ERC-721:
+
+```typescript
+// ERC-721: the registrar accepts the owner or an approved operator.
+const owner = await publicClient.readContract({
+  address: nftContract,
+  abi: erc721Abi,
+  functionName: 'ownerOf',
+  args: [tokenId],
+});
+const controls = owner.toLowerCase() === account.toLowerCase();
+```
+
+## 2. Check that the name is available
+
+`isAvailable(slug, label)` mirrors the `register` guards that do not depend on the caller
+(label shape, collection exists, name free). `slug` is the collection (parent), `label` is
+the name.
+
+```typescript
+const available = await publicClient.readContract({
+  address: registrar,
+  abi: registrarAbi,
+  functionName: 'isAvailable',
+  args: [slug, label], // e.g. ('normies', 'charlie')
+});
+
+if (!available) {
+  // render: "name already taken, pick another"
+}
+```
+
+## 3. Price the name (native ETH)
+
+Registration is paid in **native ETH** via `msg.value`, with length-based pricing
+(shorter names cost more). The price is a gas-free view returning wei — no token, no
+approval step.
+
+```typescript
+// Live price for the typed label (wei).
+const price = await publicClient.readContract({
+  address: registrar,
+  abi: registrarAbi,
+  functionName: 'priceForLabel',
+  args: [label],
+});
+
+// Pre-flight: make sure the wallet can cover the price plus a little gas.
+const balance = await publicClient.getBalance({ address: account });
+const GAS_BUFFER = 2_000_000_000_000_000n; // 0.002 ETH
+if (balance < price + GAS_BUFFER) {
+  // render: "You need X ETH to register this name (plus a little for gas)"
+}
+```
+
+## 4. Register in one transaction
+
+aDNS names are dual-mode ERC-6909 tokens: a **free** name is owned by a wallet and is
+transferable; a **bound** name is owned by an NFT and is frozen (BYONFT). The registrar
+exposes both entry points, both `payable`, same price:
+
+- `register(slug, label)` — mints a **free** wallet-owned name to the caller.
+- `registerWithBinding(slug, label, nftOwner)` — atomically mints **and binds** the name
+  to an NFT the caller controls (this is the BYONFT flow the widget uses).
+
+```typescript
+const hash = await walletClient.writeContract({
+  address: registrar,
+  abi: registrarAbi,
+  functionName: 'registerWithBinding',
+  value: price, // native ETH; contract refunds any excess
+  args: [
+    slug, // collection, e.g. "normies"
+    label, // the name, e.g. "charlie"
+    {
+      chainId, // must equal the registrar's chain in v1 (same-chain only)
+      tokenContract, // the ERC-721 collection
+      tokenId, // the specific token
+    },
+  ],
+});
+```
+
+A free name can be bound later with `bind(node, nftOwner)`, moved between NFTs with
+`rebind`, or released back to free mode with `unbind`. See [ADNSIP-25](/docs/adnsip-25).
+
+On success the name is bound to the NFT, and `normies.charlie` (public form;
+`charlie.normies.adns.eth` under the hood) resolves to that token. Whoever controls the
+token controls the name.
+
+<Callout type="info">
+  Collection slugs (the parent, e.g. `normies`) are admin-allocated in v1 via
+  `registerCollection`. A user registers a `label` under an existing slug. If the slug does
+  not exist, `isAvailable` returns false.
+</Callout>
+
+## Reading bindings (ADNSIP-25)
+
+To resolve a name to its NFT, or verify a binding, use the registry's forward record:
+
+```typescript
+// Forward record: name -> NFT tuple
+const nft = await publicClient.readContract({
+  address: registry,
+  abi: registryAbi,
+  functionName: 'ownerNft',
+  args: [node], // namehash of label.slug.adns.eth
+});
+```
+
+A binding is **verified** only when the forward record and the NFT's `adns` reverse record
+agree — see [ADNSIP-25](/docs/adnsip-25) for the reconciliation rule.

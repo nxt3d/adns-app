@@ -1,0 +1,132 @@
+---
+title: ADNSIP-25
+description: A bi-directional record for verifying the binding between an aDNS name and an NFT.
+---
+
+<Callout type="info">
+  Canonical spec surfaced from the contracts repository (`adns/docs/adnsip-25.md`). Status:
+  draft. Contributors: premm.eth.
+</Callout>
+
+## Abstract
+
+This ADNSIP defines a bi-directional record for establishing a verifiable binding between an
+aDNS name and a non-fungible token (NFT). aDNS is a naming layer for NFTs: where ENS gives
+wallets names, aDNS gives NFTs names. Each aDNS name is an ERC-6909 token id whose owner is an
+NFT identified by the tuple `(chainId, tokenContract, tokenId)`. A binding is considered
+**verified** only when the **forward record** (stored in the aDNS registry, name → NFT) and the
+**reverse record** (stored in the NFT's metadata, NFT → name) agree.
+
+## Motivation
+
+A name that merely *claims* to point at an NFT is not trustworthy on its own: anyone may register
+a name that references an NFT they do not control, and any NFT's metadata may reference a name it
+was never granted. Trust requires both endpoints to attest to the same binding. This ADNSIP
+specifies the two records, the on-chain authorization that protects the forward record, and the
+reconciliation rule a client uses to decide whether a name and an NFT are genuinely bound.
+
+## Forward record (name → NFT)
+
+The forward record is stored in the aDNS registry, one per name. It is the NFT tuple bound to the
+name and is exposed under the reserved record key `adns`.
+
+For a name with node `node` (an ENS-style namehash), the registry exposes:
+
+```solidity
+function ownerNft(bytes32 node) external view returns (NftOwner memory); // {chainId, tokenContract, tokenId}
+function adnsRecord(bytes32 node) external view returns (bytes memory);   // abi.encode(chainId, tokenContract, tokenId)
+```
+
+`adnsRecord` is the canonical, ABI-encoded forward record. A future revision MAY re-encode it as
+an [ERC-7930](https://eips.ethereum.org/EIPS/eip-7930) interoperable address; clients MUST treat
+the encoding as versioned by this spec.
+
+The forward record is written only by an authorized party. Authorization is held by the **current
+controller** of the bound NFT — for a same-chain NFT, the live `ownerOf(tokenId)`, together with
+that holder's ERC-721 approved/operator delegates. Because authority is resolved live from
+`ownerOf`, **the name follows the NFT**: when the NFT is transferred, control of the name moves to
+the new holder automatically.
+
+## Reverse record (NFT → name)
+
+The reverse record lives in the bound NFT's metadata under the key `adns`, and its value is the
+aDNS name (or, equivalently, its node). Two carriers are defined:
+
+- **Adapter / on-chain-metadata NFTs**: the reverse record is a metadata entry with key `adns`
+  whose value is the aDNS name string.
+- **External NFTs** (standard ERC-721 with a `tokenURI` JSON document): the reverse record is an
+  `adns` field in the token's metadata JSON, e.g. `{ "name": "...", "adns": "yoel.normies" }`.
+
+The reverse record is set by the NFT's own owner through whatever mechanism the NFT contract
+provides; aDNS does not govern it. Its presence is the NFT's attestation that it accepts the name.
+
+## Reconciliation
+
+A name N and an NFT T are **verified bound** if and only if BOTH hold:
+
+1. **Forward agrees:** the aDNS forward record for N resolves to T.
+2. **Reverse agrees:** the `adns` reverse record in T's metadata resolves to N.
+
+If only the forward record agrees, the binding is **claimed** (the name points at the NFT, but the
+NFT has not attested back). If only the reverse record agrees, the binding is **dangling** (the NFT
+claims a name that does not point back). Only mutual agreement yields **verified**.
+
+## Node derivation
+
+aDNS names are name-derived, never numeric. The public form `slug.label` (e.g. `normies.yoel`)
+corresponds to the under-the-hood ENS name `label.slug.adns.eth` (e.g. `yoel.normies.adns.eth`).
+Nodes are computed with the standard ENS namehash:
+
+```text
+node(label, parent) = keccak256(parent, keccak256(label))
+rootNode            = namehash("adns.eth")
+```
+
+The ERC-6909 token id of a name is `uint256(node)`.
+
+## Registration interface (for integrators)
+
+The registrar issues second-level names under a collection slug and binds each to an NFT the caller
+controls. The widget pre-checks availability with a `view`, then submits `register`:
+
+```solidity
+// Pre-check (no gas): true if `label` can be registered under collection `slug`.
+function isAvailable(string calldata slug, string calldata label) external view returns (bool);
+
+// Register `label` under `slug`, bound to `owner`. Caller MUST currently control `owner`
+// (same-chain NFT, proven via ERC-721 ownerOf/approval).
+function register(
+    string calldata slug,
+    string calldata label,
+    NftOwner calldata owner   // { uint256 chainId; address tokenContract; uint256 tokenId }
+) external returns (bytes32 node);
+```
+
+## Off-chain client behavior
+
+To confirm a binding for display (e.g. a verified checkmark), a client MUST:
+
+1. Resolve the name N to its node and read the forward record `ownerNft(node)` → candidate NFT T.
+2. Read T's `adns` reverse record from its metadata carrier.
+3. Confirm the reverse record names N (compare by node after normalizing the name).
+4. Display **verified** only if steps 1 and 3 agree; otherwise display **claimed** or **dangling**,
+   never a bare verified state.
+
+Clients SHOULD cache results with a short TTL and MUST re-verify on NFT transfer, because the
+forward record's controller is resolved live from `ownerOf` and a transfer silently moves control.
+
+## Security considerations
+
+- **Cross-chain authorization gap.** For an NFT on a foreign chain, the registry cannot call
+  `ownerOf` and therefore cannot resolve a live controller; **v1 registration is restricted to
+  same-chain NFTs.** Foreign-chain bindings (if later permitted) have no on-chain controller and
+  must rely on an external proof system.
+- **Stale reverse records.** If an NFT is transferred or its metadata edited, a previously valid
+  reverse record may no longer reflect intent. Clients MUST re-verify on transfer.
+- **Non-transferable token surface.** The ERC-6909 `transfer`/`transferFrom` functions are
+  intentionally disabled: a name moves only by re-binding to a different NFT via the
+  controller-authorized `rebind`, or implicitly by transferring the underlying NFT.
+
+<Callout type="info">
+  Copyright and related rights waived via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+</Callout>

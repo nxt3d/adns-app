@@ -1,0 +1,46 @@
+---
+title: Naming conventions
+description: Why an aDNS name reads name.sub, and how the public form maps to storage.
+---
+
+An aDNS name has the public form:
+
+```text
+name.sub.sub
+```
+
+For example: `normies.yoel`.
+
+## The label you own comes first
+
+In DNS and ENS, the most specific part is on the left and the root is on the right
+(`alice.eth`, `mail.google.com`). aDNS inverts this for the *public* form so the label
+**you register leads**:
+
+- `normies.yoel` — `yoel` is registered under the `normies` namespace.
+- `pudgypenguins.charlie` — `charlie` is registered under `pudgypenguins`.
+
+The leftmost segment is the collection or parent namespace; the segment after it is your
+second-level name. You read it outward: *the* `yoel` *of* `normies`.
+
+## Backwards by default
+
+Internally, aDNS stores names in the conventional out-to-in order — the same order ENS
+resolvers expect. The public `normies.yoel` corresponds to the stored name with `yoel`
+as the second-level label beneath the `normies` parent.
+
+<Callout type="info">
+  Rule of thumb: the **aDNS form** (`normies.yoel`) is what you read, share, and type into
+  the registration widget. The **stored form** is what the contracts and resolvers see. The
+  app handles the conversion for you.
+</Callout>
+
+## Levels
+
+- **Apex** — reserved for the protocol.
+- **First level** — collection slugs (e.g. `normies`, `pudgypenguins`). This is the parent
+  namespace your name lives under.
+- **Second level** — the name you register and own (e.g. `yoel`, `charlie`).
+
+Names are issued as real labels. There are no numeric ids to remember: the label you
+register is the label everyone sees.

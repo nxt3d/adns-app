@@ -1,0 +1,56 @@
+---
+title: The BYONFT model
+description: Bring Your Own NFT — how an NFT comes to own an aDNS name.
+---
+
+aDNS does not mint a new token to hold your name. The owner of every aDNS name is an
+**NFT you already control**. This is the BYONFT model: *Bring Your Own NFT*.
+
+## How binding works
+
+When you register, you point the aDNS registrar at a token you control:
+
+- a **chain id** — where the NFT lives,
+- a **contract address** — the NFT collection, and
+- a **token id** — the specific token.
+
+The registrar binds the new name to that `(chain, contract, tokenId)` triple. From then
+on, control of the name is exactly control of the NFT.
+
+## Supported token standards
+
+| Standard  | Control rule |
+| --------- | ------------ |
+| ERC-721   | `ownerOf(tokenId)` is the controller. |
+| ERC-1155  | any account with `balanceOf(account, tokenId) > 0`. |
+| ERC-6909  | any account with `balanceOf(account, tokenId) > 0`. |
+
+For single-owner NFTs (ERC-721) control is unambiguous. For multi-token standards
+(ERC-1155, ERC-6909) any holder of the bound id qualifies, so shared control is preserved
+rather than flattened into a synthetic single owner.
+
+<Callout type="warning">
+  v1 status: the deployed registrar proves control for **ERC-721 same-chain** NFTs only. The
+  ERC-1155 and ERC-6909 control proofs above describe the target model; their on-chain
+  verification is on the contracts roadmap (see [ADNSIP-25](/docs/adnsip-25)). The
+  registration widget binds ERC-721 NFTs today and surfaces this limit inline for others.
+</Callout>
+
+## The name follows the NFT
+
+Because the name is owned by the NFT and not by a wallet:
+
+- **Transfer the NFT → the name moves with it.** No separate name transfer.
+- **Sell the NFT → the buyer controls the name.** No window where the seller still holds it.
+- **Lose access to the NFT → you lose the name.** Custody of the name *is* custody of the NFT.
+
+<Callout type="tip">
+  The name is a property of the NFT. If you want the name to be durable, hold it with a
+  durable NFT — a vaulted token, a multisig-held NFT, or a token you do not intend to sell.
+</Callout>
+
+## Names are ERC-6909 tokens
+
+Each aDNS name is itself an ERC-6909 multi-token id in the aDNS registry. That is how the
+registry tracks issuance and uniqueness. But the *owner* slot for each name id always
+resolves to the bound NFT — the ERC-6909 id is the name, the NFT is the owner.
