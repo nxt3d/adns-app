@@ -1,46 +1,37 @@
 ---
 title: Naming conventions
-description: Why an aDNS name reads name.sub, and how the public form maps to storage.
+description: How an aDNS name reads in the app, and how the public form maps to on-chain storage.
 ---
 
 An aDNS name has the public form:
 
-```text
-name.sub.sub
+```
+yoel.normies
 ```
 
-For example: `normies.yoel`.
+where `yoel` is the leaf (the holder's name) and `normies` is the project.
 
-## The label you own comes first
-
-In DNS and ENS, the most specific part is on the left and the root is on the right
-(`alice.eth`, `mail.google.com`). aDNS inverts this for the *public* form so the label
-**you register leads**:
-
-- `normies.yoel` — `yoel` is registered under the `normies` namespace.
-- `pudgypenguins.charlie` — `charlie` is registered under `pudgypenguins`.
-
-The leftmost segment is the collection or parent namespace; the segment after it is your
-second-level name. You read it outward: *the* `yoel` *of* `normies`.
-
-## Backwards by default
-
-Internally, aDNS stores names in the conventional out-to-in order — the same order ENS
-resolvers expect. The public `normies.yoel` corresponds to the stored name with `yoel`
-as the second-level label beneath the `normies` parent.
-
-<Callout type="info">
-  Rule of thumb: the **aDNS form** (`normies.yoel`) is what you read, share, and type into
-  the registration widget. The **stored form** is what the contracts and resolvers see. The
-  app handles the conversion for you.
-</Callout>
+Public names render as `yoel.normies`. They're stored under
+`yoel.normies.adns.eth` so any ENS-compatible tool resolves them through the
+standard mechanism. The `.adns.eth` apex is an implementation detail — the app
+never shows it, but integrators reading on-chain data will see it.
 
 ## Levels
 
-- **Apex** — reserved for the protocol.
-- **First level** — collection slugs (e.g. `normies`, `pudgypenguins`). This is the parent
-  namespace your name lives under.
-- **Second level** — the name you register and own (e.g. `yoel`, `charlie`).
+The apex `adns.eth` is the protocol root. Projects register directly under it
+(`normies.adns.eth`), and projects issue subnames to holders
+(`yoel.normies.adns.eth`).
 
-Names are issued as real labels. There are no numeric ids to remember: the label you
-register is the label everyone sees.
+## Public vs stored
+
+| Public (shown in app) | Stored (on-chain namehash)  |
+| --------------------- | --------------------------- |
+| `normies`             | `normies.adns.eth`          |
+| `yoel.normies`        | `yoel.normies.adns.eth`     |
+| `bot.yoel.normies`    | `bot.yoel.normies.adns.eth` |
+
+## Resolving through ENS
+
+Names resolve through standard ENS tooling because they live under `.eth`.
+Compute the node as `namehash(<public name>.adns.eth)` and read records from the
+aDNS registry exactly as you would any ENS resolver.
