@@ -14,7 +14,7 @@ import {
   type IndexerName,
   type IndexerNameDetail,
 } from '@/lib/indexer';
-import { isValidLabel, normalizeLabel, parentNode, parentStored } from '@/lib/name';
+import { isValidLabel, normalizeLabel, parentNode } from '@/lib/name';
 import { truncateMiddle } from '@/lib/format';
 
 export default function ProjectPage({
@@ -79,9 +79,11 @@ export default function ProjectPage({
             <h1 className="font-display text-display-2 tracking-tight text-ink">
               {label}
             </h1>
-            <p className="mt-1 font-mono text-sm text-ink-subtle">
-              {parentStored(label)}
-            </p>
+            {children && children.length > 0 ? (
+              <p className="mt-1 text-sm text-ink-subtle">
+                {children.length} name{children.length === 1 ? '' : 's'} issued
+              </p>
+            ) : null}
           </div>
           <span
             className={`rounded-pill px-3 py-1 text-xs font-extrabold uppercase tracking-wide ${
@@ -158,7 +160,7 @@ export default function ProjectPage({
                     className="flex items-center justify-between px-4 py-3"
                   >
                     <span className="font-mono text-sm text-ink">
-                      {c.label}.{label}.adns.eth
+                      {c.label}.{label}
                     </span>
                     <span className="font-mono text-xs text-ink-subtle">
                       {truncateMiddle(c.owner)}

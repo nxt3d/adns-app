@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useReadContract } from 'wagmi';
 import {
@@ -11,7 +11,8 @@ import {
   RENT_PRICE_READ_ABI,
   ZERO_ADDRESS,
 } from '@/config/contracts';
-import { isValidLabel, normalizeLabel, parentNode, parentStored } from '@/lib/name';
+import { isValidLabel, normalizeLabel, parentNode } from '@/lib/name';
+import { fetchNamesByParent, type IndexerName } from '@/lib/indexer';
 import { formatEth, truncateMiddle } from '@/lib/format';
 
 const ALLOCATION_CONTACT =
@@ -51,6 +52,20 @@ export function AvailabilityCheck() {
   const isAvailable = owner != null && owner === ZERO_ADDRESS;
   const loading = Boolean(query) && (ownerRead.isLoading || ownerRead.isFetching);
 
+  // When a project is taken, surface a sample of the subnames it has issued.
+  const [subs, setSubs] = useState<IndexerName[] | null>(null);
+  useEffect(() => {
+    if (!isTaken || !node) {
+      setSubs(null);
+      return;
+    }
+    let active = true;
+    fetchNamesByParent(node).then((r) => active && setSubs(r));
+    return () => {
+      active = false;
+    };
+  }, [isTaken, node]);
+
   return (
     <div className="w-full">
       <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row">
@@ -62,13 +77,10 @@ export function AvailabilityCheck() {
               setInput(e.target.value);
               setQuery(null);
             }}
-            placeholder="normies"
+            placeholder="your project name"
             aria-label="Project name"
-            className="focus-ring h-14 w-full rounded-card border border-line bg-paper pl-4 pr-28 text-lg font-semibold text-ink placeholder:text-ink-subtle"
+            className="focus-ring h-14 w-full rounded-card border border-line bg-paper px-4 text-lg font-semibold text-ink placeholder:text-ink-subtle"
           />
-          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-ink-subtle">
-            .adns.eth
-          </span>
         </div>
         <button
           type="submit"
@@ -88,7 +100,7 @@ export function AvailabilityCheck() {
       {query ? (
         <div className="mt-5 rounded-card border border-line bg-paper p-5">
           {loading ? (
-            <p className="text-ink-muted">Checking {parentStored(query)}…</p>
+            <p className="text-ink-muted">Checking {query}…</p>
           ) : ownerRead.isError ? (
             <p className="text-red-400">
               Couldn’t reach the network. Try again in a moment.
@@ -101,7 +113,7 @@ export function AvailabilityCheck() {
                     Available
                   </span>
                   <span className="font-mono text-lg font-semibold text-ink">
-                    {parentStored(query)}
+                    {query}
                   </span>
                 </div>
                 <p className="mt-2 text-sm text-ink-muted">
@@ -114,12 +126,12 @@ export function AvailabilityCheck() {
               <a
                 href={`${ALLOCATION_CONTACT}${
                   ALLOCATION_CONTACT.startsWith('mailto:')
-                    ? `?subject=${encodeURIComponent(`Reserve ${parentStored(query)}`)}`
+                    ? `?subject=${encodeURIComponent(`Reserve ${query}`)}`
                     : ''
                 }`}
                 className="focus-ring inline-flex h-12 shrink-0 items-center justify-center rounded-pill bg-ink px-6 text-sm font-bold text-paper-warm transition hover:bg-brand-fg"
               >
-                Reserve {parentStored(query)}
+                Reserve {query}
               </a>
             </div>
           ) : isTaken ? (
@@ -130,11 +142,16 @@ export function AvailabilityCheck() {
                     Taken
                   </span>
                   <span className="font-mono text-lg font-semibold text-ink">
-                    {parentStored(query)}
+                    {query}
                   </span>
                 </div>
                 <p className="mt-2 text-sm text-ink-muted">
-                  Owned by {truncateMiddle(owner ?? '')}
+                  {subs && subs.length > 0
+                    ? `${query} has issued ${subs.length} name${subs.length === 1 ? '' : 's'}: ${subs
+                        .slice(0, 3)
+                        .map((s) => `${s.label}.${query}`)
+                        .join(', ')}${subs.length > 3 ? '…' : ''}`
+                    : `Owned by ${truncateMiddle(owner ?? '')}`}
                 </p>
               </div>
               <Link

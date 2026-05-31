@@ -8,13 +8,29 @@ export interface ParsedName {
   parentLabel: string;
   /** stored / resolver form: `yoel.normies.adns.eth` */
   stored: string;
-  /** human / public form: `normies.yoel` */
+  /** public form (apex stripped, leaf-first): `yoel.normies` */
   display: string;
   /** registry node = namehash(stored) */
   node: `0x${string}`;
 }
 
 const APEX_SUFFIX = `.${APEX}`;
+
+/**
+ * Public display name: strip the `.adns.eth` apex from a stored name. The
+ * stored form is already leaf-first, so this is a pure suffix strip and
+ * generalizes to any depth:
+ *   normies.adns.eth            -> normies
+ *   yoel.normies.adns.eth       -> yoel.normies
+ *   bot.yoel.normies.adns.eth   -> bot.yoel.normies
+ * Use this EVERYWHERE a name is shown to users (headers, lists, titles, OG).
+ * Never render the apex in user flows — it lives in the docs only.
+ */
+export function displayName(stored: string | null | undefined): string {
+  if (!stored) return '';
+  const n = stored.trim().toLowerCase().replace(/\.$/, '');
+  return n.endsWith(APEX_SUFFIX) ? n.slice(0, -APEX_SUFFIX.length) : n;
+}
 
 /** Basic label validation (lowercase alphanumeric + hyphen, no leading/trailing hyphen). */
 export function isValidLabel(label: string): boolean {
@@ -64,7 +80,7 @@ export function parseStored(name: string): ParsedName | null {
     label,
     parentLabel: parent,
     stored: n,
-    display: `${parent}.${label}`,
+    display: `${label}.${parent}`,
     node: namehash(n) as `0x${string}`,
   };
 }

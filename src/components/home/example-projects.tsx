@@ -37,7 +37,7 @@ export function ExampleProjects() {
             className="focus-ring rounded-card border border-line bg-paper px-5 py-4 transition hover:border-brand"
           >
             <span className="font-mono text-sm font-semibold text-ink">
-              {p.label}.adns.eth
+              {p.label}
             </span>
           </Link>
         ))}

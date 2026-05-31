@@ -6,6 +6,7 @@ import { isHex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import { ADNS_REGISTRY_ADDRESS, CONTROLLER_READ_ABI } from '@/config/contracts';
 import { fetchName, type IndexerNameDetail } from '@/lib/indexer';
+import { displayName } from '@/lib/name';
 import { truncateMiddle } from '@/lib/format';
 import { TextRecordsPanel } from '@/components/profile/text-records-panel';
 import { AddressRecordsPanel } from '@/components/profile/address-records-panel';
@@ -68,7 +69,7 @@ export default function ManageNamePage({
 
       <header className="mt-4 rounded-card border border-line bg-paper p-6">
         <h1 className="font-mono text-xl font-bold text-ink">
-          {detail?.name ?? truncateMiddle(node, 10, 8)}
+          {detail?.name ? displayName(detail.name) : truncateMiddle(node, 10, 8)}
         </h1>
         <p className="mt-2 text-sm text-ink-subtle">
           Controller {truncateMiddle(controller ?? '')}

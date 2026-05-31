@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@/components/wallet/connect-button';
 import { fetchNamesByOwner, type IndexerName } from '@/lib/indexer';
+import { displayName } from '@/lib/name';
 import { truncateMiddle } from '@/lib/format';
 
 export default function ManagePage() {
@@ -54,7 +55,7 @@ export default function ManagePage() {
                 className="flex items-center justify-between px-4 py-4 transition hover:bg-paper-tint"
               >
                 <span className="font-mono text-sm text-ink">
-                  {n.name ?? `${n.label}.…`}
+                  {n.name ? displayName(n.name) : n.label}
                 </span>
                 <span className="text-xs font-semibold text-brand-strong">Manage →</span>
               </Link>
