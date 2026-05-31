@@ -49,7 +49,7 @@ pnpm dev                     # http://localhost:3000
 | --- | --- |
 | `NEXT_PUBLIC_REOWN_PROJECT_ID` | Reown/WalletConnect project id (wallet modal) |
 | `NEXT_PUBLIC_APP_URL` | Public site URL (wallet metadata). Prod: `https://adns.cc` |
-| `NEXT_PUBLIC_MAINNET_RPC_URL` | Mainnet RPC. Must be `NEXT_PUBLIC_` to reach the browser; blank → viem public RPC |
+| `MAINNET_RPC_URL` | Mainnet RPC (carries the API key). **Server-side only** — proxied via `/api/rpc`, never exposed to the browser. Blank → viem public RPC |
 | `NEXT_PUBLIC_ADNS_INDEXER_URL` | aDNS indexer GraphQL endpoint (coming soon); blank → direct contract reads |
 
 ## Indexer
