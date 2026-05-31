@@ -2,42 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark-only for v1. Palette: dappa's near-black grays + an aDNS violet accent. */
 :root {
-  color-scheme: light;
-  --background: #fafaf8;
-  --foreground: #0a0a0a;
-  --muted: #5f646b;
-  --subtle: #8a9099;
-  --border: #e6e6ea;
-  --border-soft: #eeeef1;
-  --surface: #ffffff;
-  --section-tint: #f4f4f7;
-  --accent: #5b4bff;
-  --accent-strong: #4536d6;
-  --accent-soft: #ece9ff;
-  --accent-fg: #2a1d99;
-  --shadow-hairline: rgba(10, 10, 10, 0.06);
-
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
-}
-
-html.dark {
   color-scheme: dark;
-  --background: #0c0c0f;
+  --background: #0b0b10;
   --foreground: #f4f4f5;
   --muted: #a1a1aa;
   --subtle: #71717a;
-  --border: #2b2b30;
-  --border-soft: #1f1f23;
-  --surface: #161619;
-  --section-tint: #1d1d20;
-  --accent: #8b7dff;
-  --accent-strong: #a99dff;
-  --accent-soft: #221d44;
-  --accent-fg: #d7d0ff;
-  --shadow-hairline: rgba(0, 0, 0, 0.32);
+  --border: #2a2a31;
+  --border-soft: #1e1e24;
+  --surface: #151519;
+  --section-tint: #1b1b21;
+  --accent: #7c6cff;
+  --accent-strong: #9a8dff;
+  --accent-soft: #1e1a3a;
+  --accent-fg: #d8d2ff;
+  --shadow-hairline: rgba(0, 0, 0, 0.4);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
 }
 
 * {
@@ -76,7 +60,6 @@ select {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
-
 .focus-ring:focus-visible {
   outline-color: var(--accent);
 }
@@ -137,7 +120,7 @@ select {
   padding: 0;
 }
 .prose-adns a {
-  color: var(--accent);
+  color: var(--accent-strong);
   text-decoration: underline;
   text-underline-offset: 2px;
 }

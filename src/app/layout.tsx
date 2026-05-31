@@ -1,60 +1,44 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { WalletProvider } from '@/components/wallet/wallet-provider';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 
-// This is a wallet dapp: every route depends on client wallet state and the
-// Reown AppKit provider (which uses useSearchParams). Render dynamically to
-// avoid brittle static prerendering / CSR-bailout failures at build time.
-export const dynamic = 'force-dynamic';
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-jakarta',
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://adns.cc';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'aDNS — names for NFTs',
+    default: 'aDNS — domain names for agent projects',
     template: '%s · aDNS',
   },
   description:
-    'Register and manage aDNS names. Names belong to NFTs, resolved on Ethereum mainnet.',
+    'aDNS is a domain service for agents and agent NFT projects. Claim your project name and issue subnames to every holder.',
 };
 
-const themeScript = `
-(() => {
-  try {
-    const saved = localStorage.getItem('adns-theme');
-    const theme = saved === 'dark' || saved === 'light' ? saved : 'light';
-    const root = document.documentElement;
-    root.classList.toggle('dark', theme === 'dark');
-    root.dataset.theme = theme;
-    root.style.colorScheme = theme;
-  } catch {}
-})();
-`;
+// Wallet dapp: every route depends on client wallet state. Render dynamically
+// to avoid static-prerender / CSR-bailout issues with wagmi/RainbowKit.
+export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="light" data-theme="light" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+    <html lang="en" className={`${jakarta.variable} dark`} suppressHydrationWarning>
       <body>
-        <Suspense fallback={null}>
-          <WalletProvider>
-            <div className="flex min-h-screen flex-col">
-              <SiteHeader />
-              <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
-                {children}
-              </main>
-              <SiteFooter />
-            </div>
-          </WalletProvider>
-        </Suspense>
+        <WalletProvider>
+          <div className="flex min-h-screen flex-col">
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </div>
+        </WalletProvider>
       </body>
     </html>
   );
