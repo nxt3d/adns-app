@@ -1,30 +1,30 @@
 ---
 title: The .adns.eth apex
-description: A footnote — how aDNS names map to an ENS-compatible namespace under the hood.
+description: A footnote — how ADNS names map to an ENS-compatible namespace under the hood.
 ---
 
 This page is a footnote, not the headline.
 
-aDNS names are **their own class of name**. The product is the bare aDNS form —
-`yoel.normies`. You do not need to know anything below to use aDNS.
+ADNS names are **their own class of name**. The product is the bare ADNS form —
+`yoel.normies`. You do not need to know anything below to use ADNS.
 
 ## What happens under the hood
 
-For compatibility with existing resolvers and tooling, aDNS names resolve through an
-ENS-compatible namespace rooted at `adns.eth`. The public aDNS form maps to the
+For compatibility with existing resolvers and tooling, ADNS names resolve through an
+ENS-compatible namespace rooted at `adns.eth`. The public ADNS form maps to the
 stored name by appending the apex:
 
 ```text
-aDNS form:      yoel.normies
+ADNS form:      yoel.normies
 under the hood: yoel.normies.adns.eth
 ```
 
 ## Why
 
-- aDNS names are not subnames of a single ENS name in the product sense. They are their own
+- ADNS names are not subnames of a single ENS name in the product sense. They are their own
   namespace; the `.adns.eth` rooting is an implementation detail for resolver compatibility.
 - The apex `adns.eth` is controlled by the protocol.
-- Integrators who already speak ENS can resolve aDNS names with no special-casing: just use
+- Integrators who already speak ENS can resolve ADNS names with no special-casing: just use
   the under-the-hood form.
 
 The apex `adns.eth` itself is shown only here in the docs and on the chain/about page —

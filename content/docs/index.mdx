@@ -1,12 +1,12 @@
 ---
-title: What is aDNS
+title: What is ADNS
 description: Exclusive labels for NFTs — a names protocol where the owner of every name is an NFT.
 ---
 
-**aDNS** is a names protocol for NFTs. Where ENS gives wallets domains, aDNS gives
+**ADNS** is a names protocol for NFTs. Where ENS gives wallets domains, ADNS gives
 NFTs labels.
 
-A name in aDNS looks like `yoel.normies`. The thing that *owns* that name is not a
+A name in ADNS looks like `yoel.normies`. The thing that *owns* that name is not a
 wallet — it is an NFT you already hold. Bring your own NFT, register a name to it, and
 the name follows the NFT for the life of the binding.
 
@@ -14,16 +14,16 @@ the name follows the NFT for the life of the binding.
 
 - **Names belong to NFTs, not wallets.** Whoever controls the NFT controls the name.
 - **Bring your own NFT (BYONFT).** Any ERC-721, ERC-1155, or ERC-6909 token can own a name.
-- **Names are real labels.** aDNS issues second-level names directly — no sequential
+- **Names are real labels.** ADNS issues second-level names directly — no sequential
   numeric IDs.
-- **Names are themselves ERC-6909 tokens** in the aDNS registry, but their *owner* is
+- **Names are themselves ERC-6909 tokens** in the ADNS registry, but their *owner* is
   always the bound NFT.
 
 ## Why a names layer for NFTs
 
 NFTs are identity primitives — a collection membership, an agent, a character. But they
 are addressed by a contract address and a token id, which no human wants to read or
-share. aDNS gives an NFT a name a person can actually use, and because the name is owned
+share. ADNS gives an NFT a name a person can actually use, and because the name is owned
 by the NFT, it moves with the NFT automatically. Sell the NFT and the name goes with it.
 No separate transfer, no stale ownership window.
 
@@ -35,6 +35,6 @@ No separate transfer, no stale ownership window.
 - [Integration guide](/docs/integration) — register and read names from your app.
 
 <Callout type="info">
-  Under the hood, aDNS names resolve through an ENS-compatible namespace. That apex is an
+  Under the hood, ADNS names resolve through an ENS-compatible namespace. That apex is an
   implementation detail, not the product — see [The .adns.eth apex](/docs/apex).
 </Callout>

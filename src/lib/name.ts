@@ -66,7 +66,7 @@ export function toNode(stored: string): `0x${string}` {
 
 /**
  * Parse a stored name like `yoel.normies.adns.eth` into its parts. Returns null
- * if it isn't a valid 2-level aDNS name under the apex.
+ * if it isn't a valid 2-level ADNS name under the apex.
  */
 export function parseStored(name: string): ParsedName | null {
   const n = decodeURIComponent(name).trim().toLowerCase().replace(/\.$/, '');

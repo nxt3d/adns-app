@@ -30,7 +30,7 @@ function rpcTransport() {
 
 /** Single-chain (Ethereum mainnet) RainbowKit + wagmi config. */
 export const wagmiConfig = getDefaultConfig({
-  appName: 'aDNS',
+  appName: 'ADNS',
   projectId,
   transports: {
     [mainnet.id]: rpcTransport(),

@@ -2,7 +2,7 @@ import { mainnet } from 'viem/chains';
 import { ADNS_REGISTRAR_ABI } from '@/abis/adnsRegistrar';
 import { ADNS_REGISTRY_ABI } from '@/abis/adnsRegistry';
 
-/** aDNS is deployed on Ethereum mainnet only (chainId 1). */
+/** ADNS is deployed on Ethereum mainnet only (chainId 1). */
 export const CHAIN = mainnet;
 export const CHAIN_ID = mainnet.id;
 

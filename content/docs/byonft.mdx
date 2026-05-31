@@ -1,14 +1,14 @@
 ---
 title: The BYONFT model
-description: Bring Your Own NFT — how an NFT comes to own an aDNS name.
+description: Bring Your Own NFT — how an NFT comes to own an ADNS name.
 ---
 
-aDNS does not mint a new token to hold your name. The owner of every aDNS name is an
+ADNS does not mint a new token to hold your name. The owner of every ADNS name is an
 **NFT you already control**. This is the BYONFT model: *Bring Your Own NFT*.
 
 ## How binding works
 
-When you register, you point the aDNS registrar at a token you control:
+When you register, you point the ADNS registrar at a token you control:
 
 - a **chain id** — where the NFT lives,
 - a **contract address** — the NFT collection, and
@@ -51,6 +51,6 @@ Because the name is owned by the NFT and not by a wallet:
 
 ## Names are ERC-6909 tokens
 
-Each aDNS name is itself an ERC-6909 multi-token id in the aDNS registry. That is how the
+Each ADNS name is itself an ERC-6909 multi-token id in the ADNS registry. That is how the
 registry tracks issuance and uniqueness. But the *owner* slot for each name id always
 resolves to the bound NFT — the ERC-6909 id is the name, the NFT is the owner.

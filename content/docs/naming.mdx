@@ -1,9 +1,9 @@
 ---
 title: Naming conventions
-description: How an aDNS name reads in the app, and how the public form maps to on-chain storage.
+description: How an ADNS name reads in the app, and how the public form maps to on-chain storage.
 ---
 
-An aDNS name has the public form:
+An ADNS name has the public form:
 
 ```
 yoel.normies
@@ -34,4 +34,4 @@ The apex `adns.eth` is the protocol root. Projects register directly under it
 
 Names resolve through standard ENS tooling because they live under `.eth`.
 Compute the node as `namehash(<public name>.adns.eth)` and read records from the
-aDNS registry exactly as you would any ENS resolver.
+ADNS registry exactly as you would any ENS resolver.

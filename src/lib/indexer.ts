@@ -1,5 +1,5 @@
 /**
- * aDNS indexer client.
+ * ADNS indexer client.
  *
  * The browser never talks to the indexer directly — it calls our same-origin
  * proxy at `/api/adns/*` (see `src/app/api/adns/[...path]/route.ts`), which

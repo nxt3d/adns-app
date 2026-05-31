@@ -27,7 +27,7 @@ export function ExampleProjects() {
   return (
     <div className="mt-12">
       <p className="mb-3 text-xs font-extrabold uppercase tracking-wide text-ink-subtle">
-        Projects on aDNS
+        Projects on ADNS
       </p>
       <div className="grid gap-3 sm:grid-cols-3">
         {items.map((p) => (

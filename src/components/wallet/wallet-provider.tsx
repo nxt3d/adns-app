@@ -13,7 +13,7 @@ import { wagmiConfig } from '@/config/wagmi';
 
 const queryClient = new QueryClient();
 
-// Dark theme tuned to the aDNS palette (violet accent on near-black).
+// Dark theme tuned to the ADNS palette (violet accent on near-black).
 const adnsTheme: Theme = darkTheme({
   accentColor: '#7c6cff',
   accentColorForeground: '#0b0b10',

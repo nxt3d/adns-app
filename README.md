@@ -1,6 +1,6 @@
 # adns-app
 
-Front-end for **aDNS** — names for NFTs. Register and manage aDNS names on
+Front-end for **ADNS** — names for NFTs. Register and manage ADNS names on
 Ethereum mainnet. Built with Next.js 15 (App Router), wagmi v2, viem v2, and
 Reown AppKit, styled with Tailwind.
 
@@ -50,7 +50,7 @@ pnpm dev                     # http://localhost:3000
 | `NEXT_PUBLIC_REOWN_PROJECT_ID` | Reown/WalletConnect project id (wallet modal) |
 | `NEXT_PUBLIC_APP_URL` | Public site URL (wallet metadata). Prod: `https://adns.cc` |
 | `MAINNET_RPC_URL` | Mainnet RPC (carries the API key). **Server-side only** — proxied via `/api/rpc`, never exposed to the browser. Blank → viem public RPC |
-| `NEXT_PUBLIC_ADNS_INDEXER_URL` | aDNS indexer GraphQL endpoint (coming soon); blank → direct contract reads |
+| `NEXT_PUBLIC_ADNS_INDEXER_URL` | ADNS indexer GraphQL endpoint (coming soon); blank → direct contract reads |
 
 ## Indexer
 

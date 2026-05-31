@@ -9,7 +9,7 @@ export function SiteHeader() {
           <span className="grid h-7 w-7 place-items-center rounded-pill bg-brand text-sm font-extrabold text-paper-warm">
             a
           </span>
-          <span className="text-lg font-extrabold tracking-tight text-ink">aDNS</span>
+          <span className="text-lg font-extrabold tracking-tight text-ink">ADNS</span>
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2">
           <Link

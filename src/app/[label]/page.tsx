@@ -173,7 +173,7 @@ export default function ProjectPage({
         </>
       ) : null}
 
-      <p className="mt-10 text-center text-xs text-ink-subtle">Powered by aDNS</p>
+      <p className="mt-10 text-center text-xs text-ink-subtle">Powered by ADNS</p>
     </Wrap>
   );
 }

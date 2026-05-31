@@ -15,11 +15,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://adns.cc';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'aDNS — domain names for agent projects',
-    template: '%s · aDNS',
+    default: 'ADNS — domain names for agent projects',
+    template: '%s · ADNS',
   },
   description:
-    'aDNS is a domain service for agents and agent NFT projects. Claim your project name and issue subnames to every holder.',
+    'ADNS is a domain service for agents and agent NFT projects. Claim your project name and issue subnames to every holder.',
 };
 
 // Wallet dapp: every route depends on client wallet state. Render dynamically

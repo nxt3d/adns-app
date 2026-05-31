@@ -1,6 +1,6 @@
 ---
 title: ADNSIP-25
-description: A bi-directional record for verifying the binding between an aDNS name and an NFT.
+description: A bi-directional record for verifying the binding between an ADNS name and an NFT.
 ---
 
 <Callout type="info">
@@ -11,10 +11,10 @@ description: A bi-directional record for verifying the binding between an aDNS n
 ## Abstract
 
 This ADNSIP defines a bi-directional record for establishing a verifiable binding between an
-aDNS name and a non-fungible token (NFT). aDNS is a naming layer for NFTs: where ENS gives
-wallets names, aDNS gives NFTs names. Each aDNS name is an ERC-6909 token id whose owner is an
+ADNS name and a non-fungible token (NFT). ADNS is a naming layer for NFTs: where ENS gives
+wallets names, ADNS gives NFTs names. Each ADNS name is an ERC-6909 token id whose owner is an
 NFT identified by the tuple `(chainId, tokenContract, tokenId)`. A binding is considered
-**verified** only when the **forward record** (stored in the aDNS registry, name → NFT) and the
+**verified** only when the **forward record** (stored in the ADNS registry, name → NFT) and the
 **reverse record** (stored in the NFT's metadata, NFT → name) agree.
 
 ## Motivation
@@ -27,7 +27,7 @@ reconciliation rule a client uses to decide whether a name and an NFT are genuin
 
 ## Forward record (name → NFT)
 
-The forward record is stored in the aDNS registry, one per name. It is the NFT tuple bound to the
+The forward record is stored in the ADNS registry, one per name. It is the NFT tuple bound to the
 name and is exposed under the reserved record key `adns`.
 
 For a name with node `node` (an ENS-style namehash), the registry exposes:
@@ -50,21 +50,21 @@ the new holder automatically.
 ## Reverse record (NFT → name)
 
 The reverse record lives in the bound NFT's metadata under the key `adns`, and its value is the
-aDNS name (or, equivalently, its node). Two carriers are defined:
+ADNS name (or, equivalently, its node). Two carriers are defined:
 
 - **Adapter / on-chain-metadata NFTs**: the reverse record is a metadata entry with key `adns`
-  whose value is the aDNS name string.
+  whose value is the ADNS name string.
 - **External NFTs** (standard ERC-721 with a `tokenURI` JSON document): the reverse record is an
   `adns` field in the token's metadata JSON, e.g. `{ "name": "...", "adns": "yoel.normies" }`.
 
 The reverse record is set by the NFT's own owner through whatever mechanism the NFT contract
-provides; aDNS does not govern it. Its presence is the NFT's attestation that it accepts the name.
+provides; ADNS does not govern it. Its presence is the NFT's attestation that it accepts the name.
 
 ## Reconciliation
 
 A name N and an NFT T are **verified bound** if and only if BOTH hold:
 
-1. **Forward agrees:** the aDNS forward record for N resolves to T.
+1. **Forward agrees:** the ADNS forward record for N resolves to T.
 2. **Reverse agrees:** the `adns` reverse record in T's metadata resolves to N.
 
 If only the forward record agrees, the binding is **claimed** (the name points at the NFT, but the
@@ -73,7 +73,7 @@ claims a name that does not point back). Only mutual agreement yields **verified
 
 ## Node derivation
 
-aDNS names are name-derived, never numeric. The public form `label.slug` (e.g. `yoel.normies`)
+ADNS names are name-derived, never numeric. The public form `label.slug` (e.g. `yoel.normies`)
 corresponds to the under-the-hood ENS name `label.slug.adns.eth` (e.g. `yoel.normies.adns.eth`).
 Nodes are computed with the standard ENS namehash:
 

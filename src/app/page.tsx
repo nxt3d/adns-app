@@ -14,7 +14,7 @@ export default function HomePage() {
           Get a name for your NFT project
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-ink-muted">
-          Claim your project on aDNS, then issue a clean name to every holder and
+          Claim your project on ADNS, then issue a clean name to every holder and
           agent — <span className="font-mono text-ink">yoel.normies</span>,{' '}
           <span className="font-mono text-ink">agent-1.normies</span>.
         </p>

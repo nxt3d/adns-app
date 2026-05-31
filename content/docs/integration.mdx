@@ -1,9 +1,9 @@
 ---
 title: Integration guide
-description: Read name availability, check NFT control, and register a name against the aDNS registrar.
+description: Read name availability, check NFT control, and register a name against the ADNS registrar.
 ---
 
-This guide covers the calls the aDNS dapp makes. The signatures below match
+This guide covers the calls the ADNS dapp makes. The signatures below match
 `ADNSRegistrar.sol` in the contracts repository. The registrar address lands with the
 Sepolia deployment; until then the widget runs against a mock with these exact shapes.
 
@@ -72,7 +72,7 @@ if (balance < price + GAS_BUFFER) {
 
 ## 4. Register in one transaction
 
-aDNS names are dual-mode ERC-6909 tokens: a **free** name is owned by a wallet and is
+ADNS names are dual-mode ERC-6909 tokens: a **free** name is owned by a wallet and is
 transferable; a **bound** name is owned by an NFT and is frozen (BYONFT). The registrar
 exposes both entry points, both `payable`, same price:
 

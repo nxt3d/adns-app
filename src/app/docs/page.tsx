@@ -5,7 +5,7 @@ import { DocsNav } from '@/components/docs-nav';
 
 export const metadata: Metadata = {
   title: 'Docs',
-  description: 'Learn how aDNS names work — naming, the BYONFT model, and integration.',
+  description: 'Learn how ADNS names work — naming, the BYONFT model, and integration.',
 };
 
 export default function DocsIndexPage() {
