@@ -6,35 +6,26 @@ description: A footnote — how aDNS names map to an ENS-compatible namespace un
 This page is a footnote, not the headline.
 
 aDNS names are **their own class of name**. The product is the bare aDNS form —
-`normies.yoel`. You do not need to know anything below to use aDNS.
+`yoel.normies`. You do not need to know anything below to use aDNS.
 
 ## What happens under the hood
 
 For compatibility with existing resolvers and tooling, aDNS names resolve through an
-ENS-compatible namespace rooted at `adns.eth`. The public aDNS form maps to a conventional
-out-to-in name:
+ENS-compatible namespace rooted at `adns.eth`. The public aDNS form maps to the
+stored name by appending the apex:
 
 ```text
-aDNS form:     normies.yoel
+aDNS form:      yoel.normies
 under the hood: yoel.normies.adns.eth
 ```
 
-- The apex is `adns.eth`.
-- The first level (`normies`) is the collection slug / parent namespace.
-- The second level (`yoel`) is the name you registered.
+## Why
 
-## Why this is only a footnote
+- aDNS names are not subnames of a single ENS name in the product sense. They are their own
+  namespace; the `.adns.eth` rooting is an implementation detail for resolver compatibility.
+- The apex `adns.eth` is controlled by the protocol.
+- Integrators who already speak ENS can resolve aDNS names with no special-casing: just use
+  the under-the-hood form.
 
-- **It is not a marketing claim.** aDNS is not “an ENS subdomain” — it is a names protocol
-  for NFTs that happens to resolve through an ENS-compatible apex.
-- **You never type it.** The registration widget and resolvers handle the mapping. Users
-  read and share `normies.yoel`.
-- **It exists for interop.** Wallets and resolvers that already understand ENS-style names
-  can resolve aDNS names without special-casing, because the underlying name is a
-  conventional hierarchical name.
-
-<Callout type="info">
-  If you are building a resolver-level integration, the `.adns.eth` apex matters. For
-  everything else — registering, displaying, and sharing names — the aDNS form is all you
-  need.
-</Callout>
+The apex `adns.eth` itself is shown only here in the docs and on the chain/about page —
+never in user flows.
