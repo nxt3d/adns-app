@@ -7,7 +7,13 @@
  * proxy returns a non-200 and callers fall back to direct contract reads.
  */
 
+import { namehash } from 'viem/ens';
+import { APEX } from '@/config/contracts';
+
 const PROXY_BASE = '/api/adns';
+
+/** Registry node of the protocol apex (`adns.eth`). Projects are its children. */
+export const APEX_NODE = namehash(APEX) as `0x${string}`;
 
 export interface IndexerTimestamp {
   block: string;
@@ -103,4 +109,27 @@ export async function fetchNamesByOwner(address: string): Promise<IndexerName[]>
 /** Full single-name state including records. Null if missing or indexer down. */
 export async function fetchName(node: `0x${string}`): Promise<IndexerNameDetail | null> {
   return get<IndexerNameDetail>(`names/${node}`);
+}
+
+/** Children registered under a given parent node (e.g. subnames of a project). */
+export async function fetchNamesByParent(
+  parentNodeHash: `0x${string}`,
+  limit = 100,
+): Promise<IndexerName[]> {
+  const res = await get<{ names: IndexerName[] }>(
+    `names/by-parent/${parentNodeHash}?limit=${limit}`,
+  );
+  return res?.names ?? [];
+}
+
+/**
+ * Registered projects: names directly under the apex (`*.adns.eth`), excluding
+ * the apex itself. Newest-first.
+ */
+export async function fetchProjects(limit = 3): Promise<IndexerName[]> {
+  const children = await fetchNamesByParent(APEX_NODE, limit + 5);
+  return children
+    .filter((n) => !SYSTEM_LABELS.has(n.label))
+    .sort((a, b) => Number(b.createdAt.timestamp) - Number(a.createdAt.timestamp))
+    .slice(0, limit);
 }

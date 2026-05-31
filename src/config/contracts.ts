@@ -58,6 +58,33 @@ export const ADDR_COIN_ABI = [
   },
 ] as const;
 
+/** Minimal owner getter used by the availability check + project page. */
+export const OWNER_READ_ABI = [
+  {
+    type: 'function',
+    name: 'owner',
+    stateMutability: 'view',
+    inputs: [{ name: 'node', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'address' }],
+  },
+] as const;
+
+/** Minimal controller getter used to gate record editing on /manage. */
+export const CONTROLLER_READ_ABI = [
+  {
+    type: 'function',
+    name: 'controllerOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'node', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'address' }],
+  },
+] as const;
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000' as const;
+
+/** One year in seconds — the default quote duration on the homepage. */
+export const ONE_YEAR_SECONDS = 365n * 24n * 60n * 60n;
+
 export const RENT_PRICE_READ_ABI = [
   {
     type: 'function',
